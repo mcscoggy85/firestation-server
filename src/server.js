@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const Tail = require('tail').Tail;
+const execute = require('child_process').exec
 const express = require('express');
 const app = express();
 
@@ -30,8 +31,8 @@ const status = {
   }
 };
 
-app.listen(3000, ()=>{
-    console.log('The server is running on port 3000....')
+app.listen(3001, ()=>{
+    console.log('The server is running on port 3001....')
 });
 
 app.use(bodyParser.json());
@@ -67,9 +68,6 @@ app.get('/home', (request, response) => {
 
 // Send response object to the status page for front end to use to create data
 app.get('/status',(request, response) => {
-    // setInterval(()=> {
-    //     constructObj(response);
-    // }, 3000);
     response.json(status);
 
 });
@@ -81,18 +79,22 @@ const readCsvLogs = async(file) => {
 }
 // Get SystemD Status of Openvpn, using /etc/issue right now as placeholder
 const setVpnSystemdStatus = async (file) => {
+    await execCommand('systemctl status ssh > '+ file)
     const contents = await fs.readFile(file);
     const data = await contents.toString();
     status.sysd.vpnStatus.build = data;
-    status.sysd.vpnStatus.on = data.includes('Linux Mint');
+    status.sysd.vpnStatus.on = data.includes('running');
 }
 
 // Run shell command
 const execCommand = (cmd) => {
-    shell.exec(cmd);
+    execute(cmd, (err, stdout, stderr) => {
+        process.stdout.write(stdout);
+    }); 
 }
 
-// run shell command Tail
+// keep track of openpvn logs to view
+// need to add logic to only show so many lines at one time
 const tailFile = (file) => {
     const tail = new Tail(file);
 
@@ -104,25 +106,14 @@ const tailFile = (file) => {
     tail.on('error', (error)=> console.log(error));
 }
 
-// append logs to status obj
-// const getVpnLogs = (file) => {
-//     tail(file).then(data => {
-//         status.logs.openvpn.log = data
-//         console.log(status.logs.openvpn.log);
-//     }).catch(err => console.log(err));
-
-// }
-
 // Construct the array to send as a response to the client
 const constructObj = async() => {
     await tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
-    // await tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
-    await setVpnSystemdStatus('/etc/issue');
+    await setVpnSystemdStatus('/tmp/test');
     await readCsvLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
     // await response.json(status);
     // getVpnLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
 }
-
 
 // run construct function to build object
 setInterval(()=>{
