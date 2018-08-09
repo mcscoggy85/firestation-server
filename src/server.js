@@ -3,7 +3,9 @@ const fs = require('fs-extra');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const Tail = require('tail').Tail;
-const execute = require('child_process').exec
+const { exec, spawn, fork, execFile } = require('promisify-child-process');
+const ip = require('ip');
+const os = require('os');
 const express = require('express');
 const app = express();
 
@@ -28,6 +30,9 @@ const status = {
       firehole: {
           iptables: {}
       }
+  },
+  systemInfo: {
+      interfaceInfo : null
   }
 };
 
@@ -78,19 +83,26 @@ const readCsvLogs = async(file) => {
     status.logs.openvpn.stats = vpnStatusLogs.toString();
 }
 // Get SystemD Status of Openvpn, using /etc/issue right now as placeholder
-const setVpnSystemdStatus = async (file) => {
-    await execCommand('systemctl status ssh > '+ file)
-    const contents = await fs.readFile(file);
-    const data = await contents.toString();
-    status.sysd.vpnStatus.build = data;
-    status.sysd.vpnStatus.on = data.includes('running');
+const setVpnBuild = async (cmd) => {
+    const serviceStatus = await runCmd(cmd);
+    status.sysd.vpnStatus.build = serviceStatus;
+    console.log(status);
 }
 
 // Run shell command
-const execCommand = (cmd) => {
-    execute(cmd, (err, stdout, stderr) => {
-        process.stdout.write(stdout);
-    }); 
+const runCmd = async(cmd) => {
+    try {
+        const {stdout, stderr, code, exitCode} = await exec(cmd)
+        console.log(exitCode);
+        return stdout;
+        
+    } catch(err) {
+        console.log(err.code);
+        if (err.code === 3){
+            console.log('pooop')
+        }
+        return err.stdout;
+    }
 }
 
 // keep track of openpvn logs to view
@@ -100,19 +112,37 @@ const tailFile = (file) => {
 
     tail.on('line', (data)=> {
         vpnLogs.push(data);
-        console.log(vpnLogs);
+        // console.log(vpnLogs);
     });
 
     tail.on('error', (error)=> console.log(error));
 }
 
+const getHostIp = async() => {
+    return await ip.address();
+}
+
+const getAllInterfaceIP = async() => {
+    return os.networkInterfaces();
+}
 // Construct the array to send as a response to the client
 const constructObj = async() => {
     await tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
-    await setVpnSystemdStatus('/tmp/test');
     await readCsvLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
-    // await response.json(status);
-    // getVpnLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
+    await setVpnBuild('systemctl status ssh');
+    const ipaddr = await getHostIp();
+    // console.log(ipaddr);
+
+    let allIps = [] 
+    allIps.push(os.networkInterfaces());
+    status.systemInfo.interfaceInfo = allIps;
+    // console.log(status.systemInfo.interfaceInfo[0]);
+    
+
+    const regex1 = new RegExp('\(running\)');
+    if (status.sysd.vpnStatus.build.search(regex1)) {
+        status.sysd.vpnStatus.on = true
+    }
 }
 
 // run construct function to build object

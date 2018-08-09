@@ -1,12 +1,13 @@
 const Tail = require('tail').Tail;
-const execute = require('child_process').exec
+// const { exec, spawn } = require('child-process-async');
+const fs = require('fs-extra');
 
 let lines = [];
 
 const status = {
     stats : {
         openpvpn: {
-            active: Boolean
+            active: null
         }
 
     },
@@ -15,31 +16,45 @@ const status = {
             status : {},
             logs : lines
         }
+    },
+    sysd :{
+        vpnStatus: {
+            build: {},
+            on: null
+        }
     }
 }
 
-// const tailFile = (file) => {
-    
-//     const tail = new Tail(file);
-
-//     tail.on('line', (data)=> {
-//         lines.push(data);
-//         console.log(status.logs.openpvpn.logs);
-//         console.log(lines);
-//     });
-
-//     tail.on('error', (error)=> console.log(error));
-// }
-// tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/test.log');
-
-// Run shell command
-const file = '/tmp/test'
-
-const execCommand = (cmd) => {
-    execute(cmd, (err, stdout, stderr) => {
-        process.stdout.write(stdout);
-    }); 
+const readServicFile = async (cmd) => {
+    const serviceStatus = await runCmd(cmd);
+    status.sysd.vpnStatus.build = serviceStatus;
+    // serviceStatus.search(regex1) ? status.sysd.vpnStatus.on = true : status.sysd.vpnStatus.on = false;
+    console.log(status);
 }
 
-execCommand('systemctl status ssh > '+file);
+const { exec, spawn, fork, execFile } = require('promisify-child-process');
 
+exec('find . -type f | wc -l', (err, stdout, stderr) => {
+  if (err) {
+    console.error(`exec error: ${err}`);
+    return;
+  }
+
+  console.log(`Number of files ${stdout}`);
+});
+
+const runCmd = async(cmd) => {
+    const child = exec(cmd);
+    const {stdout, stderr} = await child
+    
+    if (stderr) {
+        console.log(stderr)
+    } else {
+        const sshStatus = stdout;
+        console.log(sshStatus);
+        return sshStatus;
+    }
+    
+}
+// runCmd('ls /home');
+readServicFile('systemctl status ssh');

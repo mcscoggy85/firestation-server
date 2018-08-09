@@ -33,3 +33,17 @@ Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Na
 Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
 Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 198.148.0.0/16: Name or service not known
 Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/netw
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 198.148.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/netw
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 198.148.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/netw
