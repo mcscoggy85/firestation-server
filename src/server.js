@@ -10,18 +10,32 @@ const express = require('express');
 const app = express();
 
 let vpnLogs =[];
+const buttons = [
+    'start', 
+    'stop', 
+    'restart',
+    'status', 
+    'try', 
+    'explain'
+];
 
 const status = {
-  sysd: {
+  
+    sysd: {
     vpnStatus: {
         build: {},
         on: null,
-
     },
     deviceStatus: {
-
+        build: {},
+        on: null
+    },
+    firewall: {
+        build: {},
+        on: null
     }
   },
+  
   logs: {
       openvpn: {
           stats: {},
@@ -29,11 +43,22 @@ const status = {
       },
       firehole: {
           iptables: {}
+      },
+      systems: {
+          sysLog: {}
       }
   },
+  
   systemInfo: {
       interfaceInfo : null
+  },
+
+  firehol: {
+      buttons: buttons,
+      ipTables: {},
+      config: {}
   }
+
 };
 
 app.listen(3001, ()=>{
@@ -122,9 +147,6 @@ const getHostIp = async() => {
     return await ip.address();
 }
 
-const getAllInterfaceIP = async() => {
-    return os.networkInterfaces();
-}
 // Construct the array to send as a response to the client
 const constructObj = async() => {
     await tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
