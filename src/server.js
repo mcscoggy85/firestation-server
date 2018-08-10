@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const Tail = require('tail').Tail;
-const { exec, spawn, fork, execFile } = require('promisify-child-process');
+const cp = require('child-process-es6-promise');
 const ip = require('ip');
 const os = require('os');
 const express = require('express');
@@ -107,26 +107,32 @@ const readCsvLogs = async(file) => {
     const vpnStatusLogs = await fs.readFile(file);
     status.logs.openvpn.stats = vpnStatusLogs.toString();
 }
-// Get SystemD Status of Openvpn, using /etc/issue right now as placeholder
-const setVpnBuild = async (cmd) => {
-    const serviceStatus = await runCmd(cmd);
-    status.sysd.vpnStatus.build = serviceStatus;
-    console.log(status);
-}
 
 // Run shell command
 const runCmd = async(cmd) => {
     try {
-        const {stdout, stderr, code, exitCode} = await exec(cmd)
-        console.log(exitCode);
+        const {stdout, stderr} = await cp.exec(cmd);
         return stdout;
-        
     } catch(err) {
-        console.log(err.code);
         if (err.code === 3){
-            console.log('pooop')
+            return err.stdout;
         }
-        return err.stdout;
+        
+    }
+}
+
+// execute system control status command
+const sysdStatus = async(service) => {
+    try {
+        const {stdout, stderr} = await cp.exec(`systemctl status ${service}`);
+        return stdout.includes('\(running\)');
+
+    } catch(err) {
+        if (err.code === 3){
+            const build = "He's dead Jim...";
+            return build;
+        }
+        
     }
 }
 
@@ -137,7 +143,10 @@ const tailFile = (file) => {
 
     tail.on('line', (data)=> {
         vpnLogs.push(data);
-        // console.log(vpnLogs);
+        if (vpnLogs.length >= 50) {
+            console.log('more than 50');
+        }
+
     });
 
     tail.on('error', (error)=> console.log(error));
@@ -151,20 +160,20 @@ const getHostIp = async() => {
 const constructObj = async() => {
     await tailFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
     await readCsvLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
-    await setVpnBuild('systemctl status ssh');
-    const ipaddr = await getHostIp();
-    // console.log(ipaddr);
-
+    status.sysd.vpnStatus.build = await sysdStatus('ssh');
+    
+    if (status.sysd.vpnStatus.build === true) {
+        status.sysd.vpnStatus.on = true
+    } else {
+        status.sysd.vpnStatus.on = false;
+    }
+    
     let allIps = [] 
     allIps.push(os.networkInterfaces());
     status.systemInfo.interfaceInfo = allIps;
-    // console.log(status.systemInfo.interfaceInfo[0]);
-    
 
-    const regex1 = new RegExp('\(running\)');
-    if (status.sysd.vpnStatus.build.search(regex1)) {
-        status.sysd.vpnStatus.on = true
-    }
+    console.log(vpnLogs.length);
+
 }
 
 // run construct function to build object

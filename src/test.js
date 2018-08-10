@@ -1,5 +1,4 @@
 const Tail = require('tail').Tail;
-// const { exec, spawn } = require('child-process-async');
 const fs = require('fs-extra');
 
 let lines = [];
@@ -25,67 +24,33 @@ const status = {
     }
 }
 
-// const readServicFile = async (cmd) => {
-//     const serviceStatus = await runCmd(cmd);
-//     status.sysd.vpnStatus.build = serviceStatus;
-//     // serviceStatus.search(regex1) ? status.sysd.vpnStatus.on = true : status.sysd.vpnStatus.on = false;
-//     console.log(status);
-// }
+// es6 promise-child-process-lib
+const cp = require('child-process-es6-promise');
 
-// const { exec, spawn, fork, execFile } = require('promisify-child-process');
-
-// exec('find . -type f | wc -l', (err, stdout, stderr) => {
-//   if (err) {
-//     console.error(`exec error: ${err}`);
-//     return;
-//   }
-
-//   console.log(`Number of files ${stdout}`);
-// });
-
-//original
-const runCmd = async(cmd) => {
+const runCmd4 = async(cmd) => {
     try {
-        const {stdout, stderr, code, exitCode} = await exec(cmd)
-        console.log(exitCode);
-        return stdout;
-        
+        const {stdout, stderr} = await cp.exec(cmd)
+        return stdout
     } catch(err) {
-        console.log(err.code);
         if (err.code === 3){
-            console.log('pooop')
+            const build = "He's dead Jim..."
+            return build
         }
-        return err.stdout;
+        
     }
 }
 
-// new promis-child-process
-const exec = require('child-process-promise').exec
+(async() => {
+    // const test = 
+    // console.log(test);
+    status.sysd.vpnStatus.build = await runCmd4('systemctl status ssh');
+    console.log(status.sysd.vpnStatus.build);
+    status.sysd.vpnStatus.on = status.sysd.vpnStatus.build.includes('\(running\)')
+    console.log(status.sysd.vpnStatus.on);
+})();
+// serviceStatus('ssh');
 
-const runCmd2 = async(cmd) => {
-    exec(cmd).then(result => {
-        const stdout = result.stdout;
-        const stderr = result.stderr;
-        console.log(stdout);
-        return stdout
-    }).catch(err => {
-        console.error('STDERR',err.stderr, err.code);
-        return err.code
-    });
-}
-
-const serviceStatus = async(service) => {
-    exec(`systemctl status ${service}`).then(result => {
-        const stdout = result.stdout;
-        const stderr = result.stderr;
-        console.log(stdout);
-        return stdout
-    }).catch(err => {
-        console.error('STDERR', err.code);
-        return err.code
-    });
-}
-// runCmd('ls /home');
-// readServicFile('systemctl status ssh');
-runCmd2('ls /home');
-serviceStatus('ssh');
+// (async()=>{
+//     status.sysd.openpvpn.build = runCmd2('ls /home');
+//     console.log(status.sysd.openpvpn.build);
+// })();
