@@ -25,3 +25,123 @@ Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Nam
 Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
 Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
 Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Incoming Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN 2.3.10 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [PKCS11] [MH] [IPv6] built on Jun 22 2017
+Thu Aug  2 15:21:10 2018 library versions: OpenSSL 1.0.2g  1 Mar 2016, LZO 2.08
+Thu Aug  2 15:21:10 2018 MANAGEMENT: TCP Socket listening on [AF_INET]127.0.0.1:1193
+Thu Aug  2 15:21:10 2018 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts
+Thu Aug  2 15:21:10 2018 Diffie-Hellman initialized with 2048 bit key
+Thu Aug  2 15:21:10 2018 Control Channel Authentication: using '/etc/openvpn/easy-rsa/keys/ta.key' as a OpenVPN static
+Thu Aug  2 15:21:10 2018 OpenVPN 2.3.10 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [PKCS11] [MH] [IPv6] built on Jun 22 2017
+Thu Aug  2 15:21:10 2018 library versions: OpenSSL 1.0.2g  1 Mar 2016, LZO 2.08
+Thu Aug  2 15:21:10 2018 MANAGEMENT: TCP Socket listening on [AF_INET]127.0.0.1:1193
+Thu Aug  2 15:21:10 2018 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts
+Thu Aug  2 15:21:10 2018 Diffie-Hellman initialized with 2048 bit key
+Thu Aug  2 15:21:10 2018 Control Channel Authentication: using '/etc/openvpn/easy-rsa/keys/ta.key' as a OpenVPN static key file
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Incoming Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN 2.3.10 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [PKCS11] [MH] [IPv6] built on Jun 22 2017
+Thu Aug  2 15:21:10 2018 library versions: OpenSSL 1.0.2g  1 Mar 2016, LZO 2.08
+Thu Aug  2 15:21:10 2018 MANAGEMENT: TCP Socket listening on [AF_INET]127.0.0.1:1193
+Thu Aug  2 15:21:10 2018 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts
+Thu Aug  2 15:21:10 2018 Diffie-Hellman initialized with 2048 bit key
+Thu Aug  2 15:21:10 2018 Control Channel Authentication: using '/etc/openvpn/easy-rsa/keys/ta.key' as a OpenVPN static key file
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Incoming Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Incoming Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC authentication
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN 2.3.10 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [PKCS11] [MH] [IPv6] built on Jun 22 2017
+Thu Aug  2 15:21:10 2018 library versions: OpenSSL 1.0.2g  1 Mar 2016, LZO 2.08
+Thu Aug  2 15:21:10 2018 MANAGEMENT: TCP Socket listening on [AF_INET]127.0.0.1:1193
+Thu Aug  2 15:21:10 2018 NOTE: the current --script-security setting may allow this configuration to call user-defined scripts
+Thu Aug  2 15:21:10 2018 Diffie-Hellman initialized with 2048 bit key
+Thu Aug  2 15:21:10 2018 Control Channel Authentication: using '/etc/openvpn/easy-rsa/keys/ta.key' as a OpenVPN static
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Socket Buffers: R=[212992->212992] S=[212992->212992]
+Thu Aug  2 15:21:10 2018 ROUTE_GATEWAY 10.128.33.1
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.48.0.0/16: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.48.0.0/16
+Thu Aug  2 15:21:10 2018 RESOLVE: Cannot resolve host address: 10.17.26.0/24: Name or service not known
+Thu Aug  2 15:21:10 2018 OpenVPN ROUTE: failed to parse/resolve route for host/network: 10.17.26.0/24
+#################################################
+#################################################
+Thu Aug  2 15:21:10 2018 Outgoing Control Channel Authentication: Using 160 bit message hash 'SHA1' for HMAC
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
+#################################################
