@@ -8,6 +8,7 @@ const ip = require('ip');
 const os = require('os');
 const express = require('express');
 const app = express();
+const sqlite3 = require('sqlite3').verbose();
 
 let vpnLogs =[];
 let syslog = [];
@@ -81,8 +82,18 @@ app.use(cors());
 // sign-in == /
 // status == /status ****complete for version 1****
 // vpnForm == /vpn ****complete for version 1****
-// firewallForm == /firewall
+// firewallForm == /firewall ****complete for version 1****
 // homepage == /home
+
+// Sign in and get started
+app.post('/', async(request, response)=> {
+  let db = new sqlite3.Database(':memory:', (err)=> {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the in-memory SQlite database.');
+  });
+});
 
 // Send response object to the status page for front end to use to create data
 app.get('/status',(request, response) => {
