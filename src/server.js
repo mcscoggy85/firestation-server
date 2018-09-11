@@ -110,7 +110,7 @@ app.get('/home', (request, response) => {
         fs.readFile(file).then(data => {
             data = data.toString();
             status.sysd.vpnStatus.build = data;
-            status.sysd.vpnStatus.on = data.includes('Linux Mint');
+            status.sysd.vpnStatus.on = data.includes('Ubuntu');
             const vpnSystemdStatus = status.sysd.vpnStatus.on;
             console.log(vpnSystemdStatus);
             response.json(vpnSystemdStatus);
@@ -125,13 +125,13 @@ app.get('/home', (request, response) => {
 app.post('/vpn', async(request, response) => {
   const { ca, cert, key, ta } = request.body;
   try {
-        const data = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/client-conf')
+        const data = await readSysFile('/etc/openpvn/client-conf')
         const newConf = data.toString()
           .replace('number1', `<ca>${ca}</ca>`)
           .replace('number2', `<cert>${cert}</cert>`)
           .replace('number3', `<key>${key}</key>`)
           .replace('number4', `<ta>${ta}</ta>`);
-        writeSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/client.conf', newConf);
+        writeSysFile('/etc/openvpn/client/client.conf', newConf);
         response.json({
           response: "Form is complete...."
       });        
@@ -147,13 +147,13 @@ app.post('/vpn', async(request, response) => {
 app.post('/firewall', async(request, response) => {
   const { localNets, proxyNets, localIP, openVpnIP } = request.body;
   try {
-    const data = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/firehol-conf')
+    const data = await readSysFile('/etc/firehol/firehol-conf')
     const newConf = data.toString()
       .replace('local_Nets', `"${localNets}"`)
       .replace('proxy_Nets', `"${proxyNets}"`)
       .replace('local_IP', localIP)
       .replace('openVpn_IP', openVpnIP);
-    writeSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/firehol.conf', newConf);
+    writeSysFile('/etc/firehol/firehol.conf', newConf);
     response.json({
       response: "Firehol is complete...."
   });        
@@ -173,7 +173,7 @@ const readSysFile = async (file) => {
     console.log(err, 'file or folder does not exist...')
   }
   
-}
+};
 
 const writeSysFile = async (file, contents) => {
   try{
@@ -181,20 +181,20 @@ const writeSysFile = async (file, contents) => {
   }catch(err){
     console.log(err);
   }
-}
+};
 
 
 // Read OpenVPN Status logs from csv, place them into status Object
 const readCsvLogs = async(file) => {
     const vpnStatusLogs = await fs.readFile(file);
     status.logs.openvpn.stats = vpnStatusLogs.toString();
-}
+};
 
 // Read the firewall config file called firehol.conf
 const readFirewallConfig = async(file) => {
     const fwConfig = await fs.readFile(file);
     status.firehol.config = fwConfig.toString();
-}
+};
 
 // Run shell command
 const runCmd = async(cmd) => {
@@ -208,7 +208,7 @@ const runCmd = async(cmd) => {
         }
         
     }
-}
+};
 
 // execute system control status command
 const sysdStatus = async(service) => {
@@ -223,7 +223,7 @@ const sysdStatus = async(service) => {
         }
         
     }
-}
+};
 
 // keep track of openpvn logs to view
 const tailOpenVpn = (file) => {
@@ -238,7 +238,7 @@ const tailOpenVpn = (file) => {
     });
 
     tail.on('error', (error)=> console.log(error));
-}
+};
 
 const tailSysLog = (file) => {
   const tail = new Tail(file);
@@ -252,7 +252,7 @@ const tailSysLog = (file) => {
   });
 
   tail.on('error', (error)=> console.log(error));
-}
+};
 
 const sysdStatusChecker = async(statusObj) => {
     if (statusObj.build === true) {
@@ -260,7 +260,7 @@ const sysdStatusChecker = async(statusObj) => {
     } else {
         statusObj.on = false;
     }
-}
+};
 
 const systemsInformation = async(statusObj) => {
   const hostname = await os.hostname();
@@ -289,13 +289,13 @@ const systemsInformation = async(statusObj) => {
 
 // Construct the array to send as a response to the client
 const constructObj = async() => {
-    const vpnstat = status.sysd.vpnStatus
-    const fwStat = status.sysd.firewall
-    const sysStatusInfo = status.systemInfo
+    const vpnstat = status.sysd.vpnStatus;
+    const fwStat = status.sysd.firewall;
+    const sysStatusInfo = status.systemInfo;
     
     // await tailSysLog('/var/log/syslog');
     // await tailOpenVpn('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
-    await readCsvLogs('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn-status.log');
+    await readCsvLogs('/var/log/openvpn/openvpn-status.log');
     
     vpnstat.build = await sysdStatus('ssh');
     fwStat.build = await sysdStatus('firehol');
@@ -303,15 +303,15 @@ const constructObj = async() => {
     await sysdStatusChecker(vpnstat);
     await sysdStatusChecker(fwStat);
     
-    let allIps = [] 
+    let allIps = [];
     allIps.push(os.networkInterfaces());
     status.systemInfo.interfaceInfo = allIps;
     
-    await readFirewallConfig('/etc/firehol/firehol.conf')
+    await readFirewallConfig('/etc/firehol/firehol.conf');
     status.firehol.ipTables = await runCmd('sudo iptables -L');
 
     await systemsInformation(sysStatusInfo);
 
-}
+};
 tailSysLog('/var/log/syslog');
-tailOpenVpn('/home/mrcoggsworth85/code/javascript/firestation-server/src/openvpn.log');
+tailOpenVpn('/var/log/openvpn/openvpn.log');
