@@ -123,15 +123,17 @@ app.get('/home', (request, response) => {
 
 // get form request from body, read the temp openvpn conf file, place body into temp file, write to final conf file
 app.post('/vpn', async(request, response) => {
-  const { ca, cert, key, ta } = request.body;
+  const { ipaddr, ca, cert, key, ta } = request.body;
   try {
-        const data = await readSysFile('/etc/openpvn/client-conf')
+        const data = await readSysFile('/etc/openvpn/client-conf')
         const newConf = data.toString()
-          .replace('number1', `<ca>${ca}</ca>`)
-          .replace('number2', `<cert>${cert}</cert>`)
-          .replace('number3', `<key>${key}</key>`)
-          .replace('number4', `<ta>${ta}</ta>`);
-        writeSysFile('/etc/openvpn/client/client.conf', newConf);
+          .replace('Public-IP', ipaddr )
+          .replace('CertificatAuthority', `<ca>\n${ca}\n</ca>`)
+          .replace('ClientCertificate', `<cert>\n${cert}\n</cert>`)
+          .replace('ClientKey', `<key>\n${key}\n</key>`)
+          .replace('TLS-Authentication', `<ta>\n${ta}\n</ta>`);
+        console.log(newConf);
+        writeSysFile('/etc/openvpn/client.conf', newConf);
         response.json({
           response: "Form is complete...."
       });        
@@ -153,6 +155,7 @@ app.post('/firewall', async(request, response) => {
       .replace('proxy_Nets', `"${proxyNets}"`)
       .replace('local_IP', localIP)
       .replace('openVpn_IP', openVpnIP);
+    console.log(newConf);
     writeSysFile('/etc/firehol/firehol.conf', newConf);
     response.json({
       response: "Firehol is complete...."
