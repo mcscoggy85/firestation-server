@@ -9,6 +9,7 @@ const os = require('os');
 const express = require('express');
 const app = express();
 const sqlite3 = require('sqlite3').verbose();
+const axios = require('axios');
 
 let vpnLogs =[];
 let syslog = [];
@@ -20,6 +21,15 @@ const buttons = [
     'try', 
     'explain'
 ];
+
+const user = {
+    usersloggedIn : [],
+    validEmail : [
+      'chris.scogin@dsisolutions.biz', 
+      'charlie.stamp@dsisolutions.biz', 
+      'ben.cramer@dsisolutions.biz']
+};
+
 
 const status = {
   
@@ -41,7 +51,8 @@ const status = {
   logs: {
     openvpn: {
         stats: {},
-        logs: vpnLogs
+        logs: vpnLogs,
+        testlog: {}
     },
     systems: {
         sysLog: syslog
@@ -98,26 +109,54 @@ app.post('/', async(request, response)=> {
 // Send response object to the status page for front end to use to create data
 app.get('/status',(request, response) => {
   constructObj();
+  
   response.json(status);
 
 });
 
 // Send a response to the home page
-app.get('/home', (request, response) => {
-    // This function is only in place as a fillabuster for now to send a response to the home page
-    // using /etc/issue as an example to set object vpn status to true or false
-    const setVpnSystemdStatus = (file, response) => {
-        fs.readFile(file).then(data => {
-            data = data.toString();
-            status.sysd.vpnStatus.build = data;
-            status.sysd.vpnStatus.on = data.includes('Ubuntu');
-            const vpnSystemdStatus = status.sysd.vpnStatus.on;
-            console.log(vpnSystemdStatus);
-            response.json(vpnSystemdStatus);
-        }).catch(err => console.log(err));        
-        
-      };
-    setVpnSystemdStatus('/etc/issue', response);
+app.post('/login', (request, response) => {
+    const { userData, tokenData } = request.body;
+    console.log(request.body);
+    
+    if (request.body === ''){
+      return
+    } else {
+      user.usersloggedIn.push(request.body); 
+    };
+
+    console.log(userData.email);
+
+    if (user.validEmail.includes(userData.email)){
+      console.log('Continue....')
+      axios.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${tokenData.id_token}`)
+      .then(res => {
+        console.log(res.data.email_verified);
+        console.log(res.data.hd);
+        if (res.data.email_verified && res.data.hd === 'dsisolutions.biz') {
+          console.log('Keep going...');
+        };
+      })
+      .catch(err => console.log(err));
+      // try {
+      //   for (let i of user.usersloggedIn){
+      //       if(i.email === email){
+      //         console.log('TRUE',email)
+      //           response.json({
+      //               response : true,
+      //               status: 'User logged in'
+      //           });
+      //       };
+      //   };
+      // } catch(err) {
+      //     response.json({
+      //         response : false
+      //     });
+      // };
+    };
+    
+    
+    
     
 });
 
@@ -234,6 +273,7 @@ const tailOpenVpn = (file) => {
 
     tail.on('line', (data)=> {
         vpnLogs.push(data);
+        console.log(vpnLogs);
         if (vpnLogs.length >= 50) {
             vpnLogs.shift();
         }
