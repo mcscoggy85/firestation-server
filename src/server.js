@@ -10,6 +10,7 @@ const express = require('express');
 const app = express();
 const sqlite3 = require('sqlite3').verbose();
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
 let vpnLogs =[];
 let syslog = [];
@@ -98,12 +99,16 @@ app.use(cors());
 
 // Sign in and get started
 app.post('/', async(request, response)=> {
-  let db = new sqlite3.Database(':memory:', (err)=> {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log('Connected to the in-memory SQlite database.');
+  const pubKey = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key')
+  const userToken = await verifyToken(request, response);
+  
+  jwt.verify(userToken, pubKey, (err, decode) => {
+    response.json({
+      response: decode
+    });
   });
+  
+  
 });
 
 // Send response object to the status page for front end to use to create data
@@ -115,49 +120,54 @@ app.get('/status',(request, response) => {
 });
 
 // Send a response to the home page
-app.post('/login', (request, response) => {
-    const { userData, tokenData } = request.body;
-    console.log(request.body);
-    
-    if (request.body === ''){
-      return
-    } else {
-      user.usersloggedIn.push(request.body); 
-    };
+app.post('/login', async(request, response) => {
+  const pvk = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key');
+  
+  const { userData, tokenData } = request.body;
+  console.log(request.body);
+  
+  if (request.body === ''){
+    return
+  } else {
+    user.usersloggedIn.push(request.body); 
+  };
 
-    console.log(userData.email);
+  console.log(userData.email);
 
-    if (user.validEmail.includes(userData.email)){
-      console.log('Continue....')
-      axios.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${tokenData.id_token}`)
-      .then(res => {
-        console.log(res.data.email_verified);
-        console.log(res.data.hd);
-        if (res.data.email_verified && res.data.hd === 'dsisolutions.biz') {
-          console.log('Keep going...');
+  if (user.validEmail.includes(userData.email)){
+    console.log('Continue....')
+    axios.get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${tokenData.id_token}`)
+    .then(res => {
+      console.log(res.data.email_verified);
+      console.log(res.data.hd);
+      if (res.data.email_verified && res.data.hd === 'dsisolutions.biz') {
+        console.log('Keep going...');
+        
+        // const pub = await readSysFile('./pub.key');
+        try {
+          const payload = {
+            id : userData.googleId,
+            userName : userData.email,
+            googleToken : tokenData.id_token 
+          };
+
+          jwt.sign({payload}, pvk, 
+            { 
+              expiresIn: '1h'
+             }, (err, fsToken)=> {
+              response.json({
+                token: fsToken
+              });
+          });
+        }catch(err){
+          response.json({
+            response: 'error'
+          });
         };
-      })
-      .catch(err => console.log(err));
-      // try {
-      //   for (let i of user.usersloggedIn){
-      //       if(i.email === email){
-      //         console.log('TRUE',email)
-      //           response.json({
-      //               response : true,
-      //               status: 'User logged in'
-      //           });
-      //       };
-      //   };
-      // } catch(err) {
-      //     response.json({
-      //         response : false
-      //     });
-      // };
-    };
-    
-    
-    
-    
+        
+      };
+    }).catch(err => console.log(err));
+  };
 });
 
 // get form request from body, read the temp openvpn conf file, place body into temp file, write to final conf file
@@ -206,6 +216,24 @@ app.post('/firewall', async(request, response) => {
       console.log(err);
       }
 });
+
+const verifyToken = (req, res) => {
+  const bearerHeader = req.headers['authorization'];
+  console.log('TOKEN-HEADERS >>>> ',req.headers);
+  console.log('BEARERHEADER >>> ',bearerHeader)
+  console.log(typeof bearerHeader);
+  if (typeof bearerHeader !== 'undefined'){
+
+  } else {
+    return res.sendStatus(403)
+  }
+  const bearer = bearerHeader.split(' ');
+  const userToken = bearer[1];
+  return userToken
+
+  
+
+};
 
 const readSysFile = async (file) => {
   try {
