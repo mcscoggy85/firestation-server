@@ -98,24 +98,39 @@ app.use(cors());
 // homepage == /home
 
 // Sign in and get started
-app.post('/', async(request, response)=> {
+app.post('/show-routes', verifyToken, async(request, response)=> {
   const pubKey = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key')
-  const userToken = await verifyToken(request, response);
+  const userToken = request.token
   
-  jwt.verify(userToken, pubKey, (err, decode) => {
-    response.json({
-      response: decode
-    });
+  jwt.verify(userToken, pubKey, (err, authData) => {
+    if (err) {
+      response.sendStatus(403);
+    } else {
+      response.json({
+        message: 'Token is valid',
+        authData
+      });
+    };
   });
-  
-  
 });
 
 // Send response object to the status page for front end to use to create data
-app.get('/status',(request, response) => {
-  constructObj();
+app.get('/status',verifyToken, async(request, response) => {
+  const pubKey = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key')
+  const userToken = request.token
+
+  jwt.verify(userToken, pubKey, (err) => {
+    if (err) {
+      response.json({
+        response : err
+      });
+      
+    } else {
+      constructObj();
+      response.json(status);
+    };
+  });
   
-  response.json(status);
 
 });
 
@@ -151,10 +166,7 @@ app.post('/login', async(request, response) => {
             googleToken : tokenData.id_token 
           };
 
-          jwt.sign({payload}, pvk, 
-            { 
-              expiresIn: '1h'
-             }, (err, fsToken)=> {
+          jwt.sign({payload}, pvk, { expiresIn: '1h'}, (err, fsToken)=> {
               response.json({
                 token: fsToken
               });
@@ -171,65 +183,84 @@ app.post('/login', async(request, response) => {
 });
 
 // get form request from body, read the temp openvpn conf file, place body into temp file, write to final conf file
-app.post('/vpn', async(request, response) => {
+app.post('/vpn', verifyToken, async(request, response) => {
+  const pubKey = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key')
+  const userToken = request.token
   const { ipaddr, ca, cert, key, ta } = request.body;
-  try {
-        const data = await readSysFile('/etc/openvpn/client-conf')
-        const newConf = data.toString()
-          .replace('Public-IP', ipaddr )
-          .replace('CertificatAuthority', `<ca>\n${ca}\n</ca>`)
-          .replace('ClientCertificate', `<cert>\n${cert}\n</cert>`)
-          .replace('ClientKey', `<key>\n${key}\n</key>`)
-          .replace('TLS-Authentication', `<ta>\n${ta}\n</ta>`);
-        console.log(newConf);
-        writeSysFile('/etc/openvpn/client.conf', newConf);
-        response.json({
-          response: "Form is complete...."
-      });        
-      } catch(err) {
+  const data = await readSysFile('/etc/openvpn/client-conf')
+
+  jwt.verify(userToken, pubKey, (err) => {
+    if (err) {
+      response.sendStatus(403);
+    } else {
+        try {
+          const newConf = data.toString()
+            .replace('Public-IP', ipaddr )
+            .replace('CertificatAuthority', `<ca>\n${ca}\n</ca>`)
+            .replace('ClientCertificate', `<cert>\n${cert}\n</cert>`)
+            .replace('ClientKey', `<key>\n${key}\n</key>`)
+            .replace('TLS-Authentication', `<ta>\n${ta}\n</ta>`);
+          console.log(newConf);
+          writeSysFile('/etc/openvpn/client.conf', newConf);
           response.json({
-              response: "Form completion failed...."
-          });
-          console.log(err);
-          }
+            response: "Form is complete...."
+        });        
+        } catch(err) {
+            response.json({
+                response: "Form completion failed...."
+            });
+            console.log(err);
+            };
+    };
+  });
+  
+  
 });
 
 // get form request from body, read the temp firehol conf file, place body into temp file, write to final conf file
-app.post('/firewall', async(request, response) => {
+app.post('/firewall', verifyToken, async(request, response) => {
   const { localNets, proxyNets, localIP, openVpnIP } = request.body;
-  try {
-    const data = await readSysFile('/etc/firehol/firehol-conf')
-    const newConf = data.toString()
-      .replace('local_Nets', `"${localNets}"`)
-      .replace('proxy_Nets', `"${proxyNets}"`)
-      .replace('local_IP', localIP)
-      .replace('openVpn_IP', openVpnIP);
-    console.log(newConf);
-    writeSysFile('/etc/firehol/firehol.conf', newConf);
-    response.json({
-      response: "Firehol is complete...."
-  });        
-  } catch(err) {
-      response.json({
-          response: "Firehol completion failed...."
-      });
-      console.log(err);
-      }
+  const userToken = request.token
+  const pubKey = await readSysFile('/home/mrcoggsworth85/code/javascript/firestation-server/src/pub.key')
+  const data = await readSysFile('/etc/firehol/firehol-conf')
+
+  jwt.verify(userToken, pubKey, (err)=> {
+    if (err) {
+      response.sendStatus(403);
+    } else {
+      try {
+        const newConf = data.toString()
+          .replace('local_Nets', `"${localNets}"`)
+          .replace('proxy_Nets', `"${proxyNets}"`)
+          .replace('local_IP', localIP)
+          .replace('openVpn_IP', openVpnIP);
+        console.log(newConf);
+        writeSysFile('/etc/firehol/firehol.conf', newConf);
+        response.json({
+          response: "Firehol is complete...."
+      });        
+      } catch(err) {
+          response.json({
+              response: "Firehol completion failed...."
+          });
+          console.log(err);
+          };
+    };
+  });
 });
 
-const verifyToken = (req, res) => {
+function verifyToken(req, res, next){
   const bearerHeader = req.headers['authorization'];
-  console.log('TOKEN-HEADERS >>>> ',req.headers);
-  console.log('BEARERHEADER >>> ',bearerHeader)
-  console.log(typeof bearerHeader);
   if (typeof bearerHeader !== 'undefined'){
-
+    const bearer = bearerHeader.split(' ');
+    const userToken = bearer[1];
+    req.token = userToken;
+    next();
   } else {
     return res.sendStatus(403)
   }
-  const bearer = bearerHeader.split(' ');
-  const userToken = bearer[1];
-  return userToken
+  
+  // return userToken
 
   
 
